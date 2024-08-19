@@ -1,0 +1,68 @@
+require("ballmap")
+
+global type Player = record
+    cx: number
+    cy: number
+    size: Vector2
+    color: Color
+end
+
+function Player:new(cx: integer): Player
+    local self: Player = setmetatable({}, { __index = Player })
+
+    self.size = Vector2:new(200, 20)
+    self.cx = cx or (window.get_size().x / 2)
+    self.cy = window.get_size().y - self.size.y - 50
+    self.color = Color:new(255, 150, 100)
+
+    return self
+end
+
+function Player:update(dt: number, balls: BallMap)
+    local speed = 380
+
+    -- movement:
+    if keyboard.is_pressed(key.LShift) then
+        speed = speed * 2
+    end
+    if keyboard.is_pressed(key.A) or keyboard.is_pressed(key.Left) then
+        if (self.cx - self.size.x / 2) > 0 then
+            self.cx = self.cx - speed * dt
+        end
+    end
+    if keyboard.is_pressed(key.D) or keyboard.is_pressed(key.Right) then
+        if (self.cx + self.size.x / 2) < window.get_size().x then
+            self.cx = self.cx + speed * dt
+        end
+    end
+
+    -- update:
+    local collided_bal = balls:getCollided(self.cx - self.size.x / 2, self.cy, self.size.x, self.size.y) as Ball
+
+    if collided_bal then
+        local ball_x <const> = collided_bal.pos.x
+        local p_start <const> = self.cx - self.size.x / 2
+        local dist = math.abs(self.cx - ball_x) / 100
+    
+        if ball_x >= p_start and ball_x <= self.cx then
+            dist = dist * -1
+        end
+    
+        collided_bal:modifyVel(Vector2:new(dist, 0))
+        collided_bal.pos.y = self.cy - collided_bal.radius
+    end
+end
+
+function Player:draw()
+    render.rectangle(
+        math.floor(self.cx - self.size.x / 2),
+        math.floor(self.cy),
+        math.floor(self.size.x),
+        math.floor(self.size.y),
+        self.color
+    )
+end
+
+function Player:get_pos(): Vector2
+    return Vector2:new(self.cx, self.cy)
+end
