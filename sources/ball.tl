@@ -28,28 +28,32 @@ function Ball:update(dt: number)
 
     local speed <const> = 300
 
-    if (self.pos.x - self.radius) < 0 then
+    local win_size <const> = window.get_size()
+    local border_x <const> = math.floor(win_size.x / 26)
+    local border_y <const> = math.floor(win_size.y / 30)
+
+    if (self.pos.x - self.radius) < border_x then
         self.vel.x = -self.vel.x
-        self.pos.x = self.radius
+        self.pos.x = self.radius + border_x
         self.bump_sound:play(true)
     end
 
-    if (self.pos.x + self.radius) >= window.get_size().x then
+    if (self.pos.x + self.radius) > (win_size.x - border_x) then
         self.vel.x = -self.vel.x
-        self.pos.x = window.get_size().x - self.radius
+        self.pos.x = win_size.x - self.radius - border_x
         self.bump_sound:play(true)
     end
 
-    if (self.pos.y - self.radius) < 0 then
+    if (self.pos.y - self.radius) < border_y then
         self.vel.y = -self.vel.y
-        self.pos.y = self.radius
+        self.pos.y = border_y + self.radius
         self.bump_sound:play(true)
     end
 
     self.pos = self.pos + (self.vel * dt * speed)
 
     -- is out of bounds:
-    if (self.pos.y + self.radius) >= window.get_size().y then
+    if (self.pos.y + self.radius) > win_size.y then
         self.is_alive = false
     end
 end

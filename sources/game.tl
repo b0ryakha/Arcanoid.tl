@@ -6,6 +6,7 @@ global type Game = record
     is_start: boolean
     is_lose: boolean
     score: integer
+    bg_id: integer
 
     colors: { string : Color }
     sprites: { string : Sprite }
@@ -21,6 +22,7 @@ function Game:init()
     self.is_start = false
     self.is_lose = false
     self.score = 0
+    self.bg_id = cmath.rand_int(1, 5)
 
     self.player = Player:new()
     self.blocks = BlockMap:new()
@@ -43,9 +45,19 @@ function Game:new(): Game
     }
 
     self.colors = {
-        ["gray"] = Color:new(50, 50, 50),
-        ["black"] = Color:new(20, 20, 20)
+        ["white"] = Color:new(200, 200, 200)
     }
+
+    self.sprites = {}
+
+    for i = 0, 4 do
+        self.sprites["bg" .. (i + 1)] = Sprite:new("./images/bg.png",
+            math.floor(window.get_size().x),
+            math.floor(window.get_size().y),
+            i * 224, 0,
+            224, 240
+        )
+    end
 
     return self
 end
@@ -57,8 +69,9 @@ function Game:draw()
         local win_size <const> = window.get_size()
         local x <const> = math.floor(win_size.x / 2 - measure.x / 2)
         local y <const> = math.floor(win_size.y / 2 - measure.y / 2)
-        render.text(x, y, self.fonts["arial"], text, self.colors["black"])
+        render.text(x, y, self.fonts["arial"], text, self.colors["white"])
     else
+        render.sprite(self.sprites["bg" .. self.bg_id])
         self.player:draw()
         self.balls:draw()
         self.blocks:draw()
@@ -80,11 +93,13 @@ function Game:update(dt: number)
 
     -- win:
     if self.blocks:empty() then
+        self.bg_id = cmath.rand_int(1, 5)
+
         self.is_start = false
         self.player:reset()
 
         self.musics["track"]:set_loop(false)
-        self.musics["win"]:play()
+        self.musics["win"]:play(true)
 
         self.balls:keepOnlyFirst()
         self.balls:first().pos = Vector2:new(self.player.cx, self.player.cy - 40)

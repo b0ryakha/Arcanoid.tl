@@ -27,18 +27,19 @@ end
 
 function Player:update(dt: number, balls: BallMap)
     local speed = 380
+    local border_x <const> = math.floor(window.get_size().x / 26)
 
     -- movement:
     if keyboard.is_pressed(key.LShift) then
         speed = speed * 2
     end
     if keyboard.is_pressed(key.A) or keyboard.is_pressed(key.Left) then
-        if (self.cx - self.size.x / 2) > 0 then
+        if (self.cx - self.size.x / 2) > border_x then
             self.cx = self.cx - speed * dt
         end
     end
     if keyboard.is_pressed(key.D) or keyboard.is_pressed(key.Right) then
-        if (self.cx + self.size.x / 2) < window.get_size().x then
+        if (self.cx + self.size.x / 2) < (window.get_size().x - border_x) then
             self.cx = self.cx + speed * dt
         end
     end

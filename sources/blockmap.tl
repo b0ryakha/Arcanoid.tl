@@ -25,10 +25,10 @@ local block_color = {
 
 function BlockMap:spawnByArt(block_size: Vector2, art: { string })
     local block_pad <const> = 30
-    local win_pad <const> = 25
+    local win_pad <const> = Vector2:new(70, 50)
     local win_size <const> = window.get_size()
-    local max_blocks_x <const> = math.floor(win_size.x / (block_size.x + block_pad))
-    local max_blocks_y <const> = math.floor(win_size.y / (block_size.y + block_pad))
+    local max_blocks_x <const> = math.floor((win_size.x - win_pad.x) / (block_size.x + block_pad))
+    local max_blocks_y <const> = math.floor((win_size.y - win_pad.y) / (block_size.y + block_pad))
 
     for row = 1, max_blocks_y do
         if row > #art then break end
@@ -39,11 +39,11 @@ function BlockMap:spawnByArt(block_size: Vector2, art: { string })
             if art[row]:sub(column, column) ~= ' ' then
                 local color = block_color[art[row]:sub(column, column) as BlockTile]
                 local pos = Vector2:new(
-                    block_size.x * (column - 1) + block_pad * column + win_pad,
-                    block_size.y * (row - 1) + block_pad * row + win_pad
+                    block_size.x * (column - 1) + block_pad * column + win_pad.x,
+                    block_size.y * (row - 1) + block_pad * row + win_pad.y
                 )
                 
-                table.insert(self.data, Block:new(pos, color, block_size, 1))
+                table.insert(self.data, Block:new(pos, color, block_size, cmath.rand_int(1, 3)))
             end
         end
     end
@@ -85,25 +85,24 @@ function BlockMap:spawn()
 
     if cmath.rand_int(1, 100) <= 80 then
         self:spawnByArt(Vector2:new(50, 50), {
-            "                #",
-            "              &#@",
-            "            $###@",
-            "              &#@",
-            "                #",
+            "               #",
+            "             &#@",
+            "           $###@",
+            "             &#@",
+            "               #",
         })
     end
 
     if cmath.rand_int(1, 100) <= 30 then
         self:spawnByArt(Vector2:new(50, 50), {
-            "  ###     &&     ",
-            "              @@ ",
-            "     #@$$        ",
-            " @@@   &&&&&&&&& ",
-            "                 ",
-            "                 "
+            "  ###    &&     ",
+            "             @@ ",
+            "     #$$        ",
+            " @@@   &&&&&&&& ",
         })
     end
 
+    -- TODO: rework to using art
     if not next(self.data) then
         local block_pad = 30
         local window_pad = 25
@@ -149,7 +148,7 @@ function BlockMap:update(dt: number, balls: BallMap): integer
     while i <= #self.data do
         if self.data[i]:isBreak() then
             if cmath.rand_int(0, 2) == 1 then
-                balls:push(self.data[i].pos)
+                balls:push(self.data[i].c_pos)
                 balls:last():start(Vector2:new(cmath.rand_double(-1, 1), 1))
             end
 

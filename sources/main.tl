@@ -10,7 +10,7 @@ while true do
 
     game:update(dt)
 
-    window.clear(game.colors["gray"])
+    window.clear()
     game:draw()
     window.display()
 end
