@@ -7,12 +7,7 @@ global type BlockMap = record
     metamethod __len: function(BlockMap): integer
 end
 
-function BlockMap:new(): BlockMap
-    local self: BlockMap = setmetatable({}, {
-        __index = BlockMap,
-        __len = function(self: BlockMap): integer return #self.data end
-    })
-
+function BlockMap:spawn()
     self.data = {}
 
     if cmath.rand_int(0, 1) then
@@ -43,6 +38,15 @@ function BlockMap:new(): BlockMap
             table.insert(self.data, Block:new(pos, Color:new(100, 100, 255), size, 1))
         end
     end
+end
+
+function BlockMap:new(): BlockMap
+    local self: BlockMap = setmetatable({}, {
+        __index = BlockMap,
+        __len = function(self: BlockMap): integer return #self.data end
+    })
+
+    self:spawn()
 
     return self
 end

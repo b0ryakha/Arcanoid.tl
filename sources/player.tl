@@ -7,13 +7,20 @@ global type Player = record
     color: Color
 end
 
+local old_cx: number = 0
+local old_cy: number = 0
+
 function Player:new(cx: integer): Player
     local self: Player = setmetatable({}, { __index = Player })
 
     self.size = Vector2:new(200, 20)
+    self.color = Color:new(255, 150, 100)
+
     self.cx = cx or (window.get_size().x / 2)
     self.cy = window.get_size().y - self.size.y - 50
-    self.color = Color:new(255, 150, 100)
+
+    old_cx = self.cx
+    old_cy = self.cy
 
     return self
 end
@@ -65,4 +72,9 @@ end
 
 function Player:get_pos(): Vector2
     return Vector2:new(self.cx, self.cy)
+end
+
+function Player:reset()
+    self.cx = old_cx
+    self.cy = old_cy
 end

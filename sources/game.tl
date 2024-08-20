@@ -37,8 +37,9 @@ function Game:new(): Game
     }
 
     self.musics = {
-        ["main"] = Sound:new("./sounds/music.wav", 5, true),
-        ["end"] = Sound:new("./sounds/end.wav", 5, false)
+        ["track"] = Sound:new("./sounds/track.wav", 5, true),
+        ["lose"] = Sound:new("./sounds/lose.wav", 10),
+        ["win"] = Sound:new("./sounds/win.wav", 10)
     }
 
     self.colors = {
@@ -67,9 +68,28 @@ end
 function Game:update(dt: number)
     -- loss:
     if self.balls:empty() then
-        self.musics["main"]:stop()
-        self.musics["end"]:play()
+        self.musics["track"]:stop()
+        self.musics["lose"]:play()
         self.is_lose = true
+    end
+
+    -- force win:
+    if keyboard.is_pressed(key.LAlt) and keyboard.is_pressed(key.F1) then
+        self.blocks.data = {}
+    end
+
+    -- win:
+    if self.blocks:empty() then
+        self.is_start = false
+        self.player:reset()
+
+        self.musics["track"]:set_loop(false)
+        self.musics["win"]:play()
+
+        self.balls:keepOnlyFirst()
+        self.balls:first().pos = Vector2:new(self.player.cx, self.player.cy - 40)
+
+        self.blocks:spawn()
     end
 
     -- start & restart:
@@ -78,7 +98,7 @@ function Game:update(dt: number)
             self:init()
         elseif not self.is_start then
             self.balls:first():start(Vector2:new(0, -1))
-            self.musics["main"]:play()
+            self.musics["track"]:play()
             self.is_start = true
         end
     end

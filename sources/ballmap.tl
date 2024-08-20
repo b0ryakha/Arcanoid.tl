@@ -25,11 +25,11 @@ function BallMap:last(): Ball
 end
 
 function BallMap:push(pos: Vector2, radius: number | nil)
-    self.data[#self.data + 1] = Ball:new(
+    table.insert(self.data, Ball:new(
         pos,
         Color:new(cmath.rand_int(100, 200), cmath.rand_int(100, 200), cmath.rand_int(100, 200)),
         radius or 25
-    )
+    ))
 end
 
 function BallMap:update(dt: number)
@@ -54,6 +54,10 @@ end
 
 function BallMap:empty(): boolean
     return next(self.data) == nil
+end
+
+function BallMap:keepOnlyFirst()
+    self.data = { self:first() }
 end
 
 function BallMap:getCollided(x: number, y: number, w: number, h: number): Ball | nil
