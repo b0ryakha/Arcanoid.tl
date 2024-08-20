@@ -21,7 +21,7 @@ function Block:new(center_pos: Vector2, color: Color, size: Vector2, hp: integer
     self.size = size:copy() or Vector2:new(50, 50)
     self.c_pos = center_pos:copy() or Vector2:new(0, 0)
     self.color = color:copy() or Color:new("#FFFFFF")
-    self.outline_color = Color:new("#101010")
+    self.outline_color = Color:new("#606060")
     self.hp = hp or 1
     self.immunity = 0
     self.anim_ticks = 0
@@ -44,6 +44,7 @@ function Block:update(dt: number, balls: BallMap)
         self.size.x = cmath.lerp(self.size.x, 0, dt * 10)
         self.size.y = cmath.lerp(self.size.y, 0, dt * 10)
         self.color.a = cmath.lerp(self.color.a, 0, dt * 10) as integer
+        self.outline_color.a = cmath.lerp(self.outline_color.a, 0, dt * 10) as integer
 
         return
     end
@@ -85,7 +86,7 @@ function Block:draw()
     if self:isBreak() then return end
 
     -- outline:
-    local outline <const> = 4
+    local outline <const> = 2
     render.rectangle(
         math.floor(self.c_pos.x - self.size.x / 2),
         math.floor(self.c_pos.y - self.size.y / 2),
@@ -102,10 +103,10 @@ function Block:draw()
         math.floor(self.size.y - outline * 2),
         self.color
     )
-
-    -- cracks:
+    
     if not self.is_alive then return end
 
+    -- cracks:
     for i = 1, self.cracks_count do
         self.cracks_sprite:set_rotation(i * 45)
         render.sprite(self.cracks_sprite)
