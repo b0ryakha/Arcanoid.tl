@@ -4,6 +4,7 @@ global type Block = record
     c_pos: Vector2
     size: Vector2
     color: Color
+    outline_color: Color
     is_alive: boolean
     hp: integer
     break_sound: Sound
@@ -20,6 +21,7 @@ function Block:new(center_pos: Vector2, color: Color, size: Vector2, hp: integer
     self.size = size:copy() or Vector2:new(50, 50)
     self.c_pos = center_pos:copy() or Vector2:new(0, 0)
     self.color = color:copy() or Color:new("#FFFFFF")
+    self.outline_color = Color:new("#101010")
     self.hp = hp or 1
     self.immunity = 0
     self.anim_ticks = 0
@@ -82,11 +84,22 @@ end
 function Block:draw()
     if self:isBreak() then return end
 
+    -- outline:
+    local outline <const> = 4
     render.rectangle(
         math.floor(self.c_pos.x - self.size.x / 2),
         math.floor(self.c_pos.y - self.size.y / 2),
         math.floor(self.size.x),
         math.floor(self.size.y),
+        self.outline_color
+    )
+
+    -- block:
+    render.rectangle(
+        math.floor(self.c_pos.x - self.size.x / 2 + outline),
+        math.floor(self.c_pos.y - self.size.y / 2 + outline),
+        math.floor(self.size.x - outline * 2),
+        math.floor(self.size.y - outline * 2),
         self.color
     )
 
