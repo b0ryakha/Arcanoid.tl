@@ -1,25 +1,107 @@
 require("block")
 require("ballmap")
-require("player")
 
 global type BlockMap = record
     data: { Block }
     metamethod __len: function(BlockMap): integer
+
+    -- pre decl:
+    empty: function(BlockMap): boolean
+end
+
+local enum BlockTile
+    "#" -- red
+    "@" -- yellow
+    "$" -- green
+    "&" -- blue
+end
+
+local block_color = {
+    ["#"] = Color:new(200, 50, 50),
+    ["@"] = Color:new(255, 255, 140),
+    ["$"] = Color:new(120, 220, 120),
+    ["&"] = Color:new(120, 120, 255)
+}
+
+function BlockMap:spawnByArt(block_size: Vector2, art: { string })
+    local block_pad <const> = 30
+    local win_pad <const> = 25
+    local win_size <const> = window.get_size()
+    local max_blocks_x <const> = math.floor(win_size.x / (block_size.x + block_pad))
+    local max_blocks_y <const> = math.floor(win_size.y / (block_size.y + block_pad))
+
+    for row = 1, max_blocks_y do
+        if row > #art then break end
+
+        for column = 1, max_blocks_x do
+            if column > #art[row] then break end
+
+            if art[row]:sub(column, column) ~= ' ' then
+                local color = block_color[art[row]:sub(column, column) as BlockTile]
+                local pos = Vector2:new(
+                    block_size.x * (column - 1) + block_pad * column + win_pad,
+                    block_size.y * (row - 1) + block_pad * row + win_pad
+                )
+                
+                table.insert(self.data, Block:new(pos, color, block_size, 1))
+            end
+        end
+    end
+end
+
+function BlockMap:removeCollisions()
+    local i = 1
+
+    while i <= #self.data do
+        local need_remove = false
+
+        for j = i + 1, #self.data do
+            if self.data[i]:isCollided(self.data[j]) then
+                need_remove = true
+                break
+            end
+        end
+
+        if need_remove then
+            table.remove(self.data, i)
+        else
+            i = i + 1
+        end
+    end
 end
 
 function BlockMap:spawn()
     self.data = {}
 
-    if cmath.rand_int(0, 1) then
-        
+    if cmath.rand_int(1, 100) <= 80 then
+        self:spawnByArt(Vector2:new(50, 50), {
+            "#",
+            "@#&",
+            "@###$",
+            "@#&",
+            "#",
+        })
     end
 
-    if cmath.rand_int(0, 1) then
-        
+    if cmath.rand_int(1, 100) <= 80 then
+        self:spawnByArt(Vector2:new(50, 50), {
+            "                #",
+            "              &#@",
+            "            $###@",
+            "              &#@",
+            "                #",
+        })
     end
 
-    if cmath.rand_int(0, 1) then
-        
+    if cmath.rand_int(1, 100) <= 30 then
+        self:spawnByArt(Vector2:new(50, 50), {
+            "  ###     &&     ",
+            "              @@ ",
+            "     #@$$        ",
+            " @@@   &&&&&&&&& ",
+            "                 ",
+            "                 "
+        })
     end
 
     if not next(self.data) then
@@ -29,8 +111,15 @@ function BlockMap:spawn()
 
         for i = 1, 17 do
             local pos = Vector2:new(size.x * (i - 1) + block_pad * i + window_pad, block_pad + window_pad)
-            local hp = (i > 4 and i < 14) and 3 or 2
-            table.insert(self.data, Block:new(pos, Color:new(100, 255, 100), size, hp))
+            local color = Color:new(100, 255, 100)
+            local hp = 2
+
+            if i > 4 and i < 14 then
+                hp = 3
+                color.r, color.g, color.b = 250, 240, 120
+            end
+
+            table.insert(self.data, Block:new(pos, color, size, hp))
         end
 
         for i = 2, 16 do
@@ -38,6 +127,8 @@ function BlockMap:spawn()
             table.insert(self.data, Block:new(pos, Color:new(100, 100, 255), size, 1))
         end
     end
+
+    self:removeCollisions()
 end
 
 function BlockMap:new(): BlockMap
@@ -62,14 +153,10 @@ function BlockMap:update(dt: number, balls: BallMap): integer
                 balls:last():start(Vector2:new(cmath.rand_double(-1, 1), 1))
             end
 
+            breaks = breaks + 1
             table.remove(self.data, i)
         else
             self.data[i]:update(dt, balls)
-
-            if self.data[i]:isBreak() then
-                breaks = breaks + 1
-            end
-
             i = i + 1
         end
     end

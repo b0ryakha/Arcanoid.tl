@@ -47,7 +47,7 @@ function Block:update(dt: number, balls: BallMap)
     end
 
     if self.immunity <= 0 and balls:getCollided(self.pos.x, self.pos.y, self.size.x, self.size.y) then
-        self.break_sound:play()
+        self.break_sound:play(true)
         self.cracks_count = self.cracks_count + 1
     
         self.hp = self.hp - 1
@@ -56,7 +56,7 @@ function Block:update(dt: number, balls: BallMap)
             self.is_alive = false
             self.anim_ticks = 0.2
         else
-            self.immunity = 1
+            self.immunity = 0.5
         end
     end
 
@@ -65,6 +65,15 @@ end
 
 function Block:isBreak(): boolean
     return (not self.is_alive) and (self.anim_ticks <= 0)
+end
+
+function Block:isCollided(block: Block): boolean
+    return (
+        (self.pos.x < block.pos.x + block.size.x) and
+        (self.pos.x + self.size.x > block.pos.x) and
+        (self.pos.y < block.pos.y + block.size.y) and
+        (self.pos.y + self.size.y > block.pos.y)
+    )
 end
 
 function Block:draw()

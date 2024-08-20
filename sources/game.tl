@@ -33,7 +33,7 @@ function Game:new(): Game
     self:init()
 
     self.fonts = {
-        ["arial"] = Font:new("arial.ttf", 50)
+        ["arial"] = Font:new("arial.ttf", 50, "b")
     }
 
     self.musics = {
@@ -44,7 +44,7 @@ function Game:new(): Game
 
     self.colors = {
         ["gray"] = Color:new(50, 50, 50),
-        ["light_gray"] = Color:new(150, 150, 150)
+        ["black"] = Color:new(20, 20, 20)
     }
 
     return self
@@ -52,12 +52,12 @@ end
 
 function Game:draw()
     if self.is_lose then
-        local text <const> = "Вы проиграли! Ваш счет: " .. self.score .. "."
+        local text <const> = "You have lost, your score is " .. self.score .. " points!"
         local measure <const> = render.measure_text(self.fonts["arial"], text)
         local win_size <const> = window.get_size()
         local x <const> = math.floor(win_size.x / 2 - measure.x / 2)
         local y <const> = math.floor(win_size.y / 2 - measure.y / 2)
-        render.text(x, y, self.fonts["arial"], text, self.colors["light_gray"])
+        render.text(x, y, self.fonts["arial"], text, self.colors["black"])
     else
         self.player:draw()
         self.balls:draw()
@@ -67,7 +67,7 @@ end
 
 function Game:update(dt: number)
     -- loss:
-    if self.balls:empty() then
+    if self.balls:empty() and not self.is_lose then
         self.musics["track"]:stop()
         self.musics["lose"]:play()
         self.is_lose = true
@@ -107,6 +107,11 @@ function Game:update(dt: number)
     window.set_title("Arcanoid.tl | Score: " .. self.score)
     
     if not self.is_lose and self.is_start then
+        if not self.musics["track"]:is_play() then
+            self.musics["track"]:set_loop(true)
+            self.musics["track"]:play(true)
+        end
+
         self.player:update(dt, self.balls)
         self.balls:update(dt)
 

@@ -31,19 +31,19 @@ function Ball:update(dt: number)
     if (self.pos.x - self.radius) < 0 then
         self.vel.x = -self.vel.x
         self.pos.x = self.radius
-        self.bump_sound:play()
+        self.bump_sound:play(true)
     end
 
     if (self.pos.x + self.radius) >= window.get_size().x then
         self.vel.x = -self.vel.x
         self.pos.x = window.get_size().x - self.radius
-        self.bump_sound:play()
+        self.bump_sound:play(true)
     end
 
     if (self.pos.y - self.radius) < 0 then
         self.vel.y = -self.vel.y
         self.pos.y = self.radius
-        self.bump_sound:play()
+        self.bump_sound:play(true)
     end
 
     self.pos = self.pos + (self.vel * dt * speed)
@@ -80,7 +80,7 @@ function Ball:checkCollided(x: number, y: number, w: number, h: number): boolean
             self.vel.y = -self.vel.y
         end
 
-        self.bump_sound:play()
+        self.bump_sound:play(true)
     end
 
     return state
