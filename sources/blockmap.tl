@@ -17,10 +17,10 @@ local enum BlockTile
 end
 
 local block_color = {
-    ["#"] = Color:new(200, 50, 50),
-    ["@"] = Color:new(255, 255, 140),
-    ["$"] = Color:new(120, 220, 120),
-    ["&"] = Color:new(120, 120, 255)
+    ["#"] = Color:new(150, 50, 50),
+    ["@"] = Color:new(200, 200, 110),
+    ["$"] = Color:new(100, 180, 60),
+    ["&"] = Color:new(80, 80, 190)
 }
 
 function BlockMap:spawnByArt(block_size: Vector2, art: { string })

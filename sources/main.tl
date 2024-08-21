@@ -5,6 +5,8 @@ require("game")
 local deltatime = require("externals/deltatime/deltatime")
 local game = Game:new()
 
+window.set_icon(Sprite:new("./images/ico.png", 200, 200))
+
 while true do
     local dt = deltatime.getTime()
 

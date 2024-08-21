@@ -3,6 +3,7 @@ global type Ball = record
     vel: Vector2
     radius: number
     color: Color
+    sprite: Sprite
     is_start: boolean
     bump_sound: Sound
     is_alive: boolean
@@ -13,10 +14,14 @@ function Ball:new(pos: Vector2, color: Color, radius: number): Ball
 
     self.is_alive = true
     self.is_start = false
-    self.radius = radius or 25
-    self.pos = pos:copy() or Vector2:new(0, 0)
+    self.radius = radius
+    self.pos = pos:copy()
     self.vel = Vector2:new(0, 0)
-    self.color = color:copy() or Color:new("#FFFFFF")
+    self.color = color:copy()
+
+    local d = math.floor(self.radius * 2)
+    self.sprite = Sprite:new("./images/ball.png", d, d)
+    self.sprite:set_color(self.color)
 
     self.bump_sound = Sound:new("./sounds/bump.wav", 10)
 
@@ -96,5 +101,7 @@ end
 
 function Ball:draw()
     if not self.is_alive then return end
-    render.circle(math.floor(self.pos.x), math.floor(self.pos.y), math.floor(self.radius), self.color)
+
+    self.sprite:set_pos(math.floor(self.pos.x - self.radius), math.floor(self.pos.y - self.radius))
+    render.sprite(self.sprite)
 end
