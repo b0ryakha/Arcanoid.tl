@@ -27,7 +27,7 @@ end
 function BallMap:push(pos: Vector2, radius: number | nil)
     table.insert(self.data, Ball:new(
         pos,
-        Color:new(cmath.rand_int(100, 200), cmath.rand_int(100, 200), cmath.rand_int(100, 200)),
+        Color:new(cmath.rand_int(150, 255), cmath.rand_int(150, 255), cmath.rand_int(150, 255)),
         radius or 25
     ))
 end

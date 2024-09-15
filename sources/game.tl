@@ -1,6 +1,7 @@
 require("player")
 require("blockmap")
 require("ballmap")
+require("pmanager")
 
 global type Game = record
     is_start: boolean
@@ -12,6 +13,7 @@ global type Game = record
     sprites: { string : Sprite }
     fonts: { string : Font }
 
+    pmanager: PManager
     player: Player
     blocks: BlockMap
     balls: BallMap
@@ -24,6 +26,7 @@ function Game:init()
     self.score = 0
     self.bg_id = cmath.rand_int(1, 5)
 
+    self.pmanager = PManager:new()
     self.player = Player:new()
     self.blocks = BlockMap:new()
     self.balls = BallMap:new()
@@ -72,9 +75,11 @@ function Game:draw()
         render.text(x, y, self.fonts["arial"], text, self.colors["white"])
     else
         render.sprite(self.sprites["bg" .. self.bg_id])
-        self.player:draw()
+        
+        self.pmanager:draw()
         self.balls:draw()
         self.blocks:draw()
+        self.player:draw()
     end
 end
 
@@ -127,10 +132,11 @@ function Game:update(dt: number)
             self.musics["track"]:play(true)
         end
 
+        self.pmanager:update(dt)
         self.player:update(dt, self.balls)
         self.balls:update(dt)
 
-        local breaks = self.blocks:update(dt, self.balls)
+        local breaks = self.blocks:update(dt, self.balls, self.pmanager)
         self.score = self.score + breaks
     end
 end

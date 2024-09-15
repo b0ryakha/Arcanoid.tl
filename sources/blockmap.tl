@@ -141,7 +141,7 @@ function BlockMap:new(): BlockMap
     return self
 end
 
-function BlockMap:update(dt: number, balls: BallMap): integer
+function BlockMap:update(dt: number, balls: BallMap, pmanager: PManager): integer
     local i = 1
     local breaks: integer = 0
 
@@ -155,7 +155,7 @@ function BlockMap:update(dt: number, balls: BallMap): integer
             breaks = breaks + 1
             table.remove(self.data, i)
         else
-            self.data[i]:update(dt, balls)
+            self.data[i]:update(dt, balls, pmanager)
             i = i + 1
         end
     end
