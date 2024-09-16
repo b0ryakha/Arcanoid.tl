@@ -30,7 +30,7 @@ function Particles:new(c_pos: Vector2, color: Color): Particles
             pos = pos,
             vel = vel,
             size = Vector2:new(size, size),
-            anim_ticks = cmath.rand_double(1, 2)
+            anim_ticks = cmath.rand_double(0.5, 1.5)
         })
     end
 

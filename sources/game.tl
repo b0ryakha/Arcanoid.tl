@@ -101,6 +101,7 @@ function Game:update(dt: number)
         self.bg_id = cmath.rand_int(1, 5)
 
         self.is_start = false
+        self.pmanager:clear()
         self.player:reset()
 
         self.musics["track"]:set_loop(false)

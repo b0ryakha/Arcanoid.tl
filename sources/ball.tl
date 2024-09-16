@@ -58,7 +58,7 @@ function Ball:update(dt: number)
     self.pos = self.pos + (self.vel * dt * speed)
 
     -- is out of bounds:
-    if (self.pos.y + self.radius) > win_size.y then
+    if (self.pos.y - self.radius) > win_size.y then
         self.is_alive = false
     end
 end

@@ -35,3 +35,7 @@ end
 function PManager:spawn(c_pos: Vector2, color: Color)
     table.insert(self.data, Particles:new(c_pos, color))
 end
+
+function PManager:clear()
+    self.data = {}
+end

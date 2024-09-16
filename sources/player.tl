@@ -62,13 +62,15 @@ function Player:update(dt: number, balls: BallMap)
 end
 
 function Player:draw()
-    render.rectangle(
-        math.floor(self.cx - self.size.x / 2),
-        math.floor(self.cy),
-        math.floor(self.size.x),
-        math.floor(self.size.y),
-        self.color
-    )
+    for i = 0, 2, 0.5 do
+        render.rectangle(
+            math.floor(self.cx - self.size.x / 2 + i * 50),
+            math.floor(self.cy + i * 50),
+            math.floor(self.size.x - i * 100),
+            math.floor(self.size.y - i * 15),
+            Color:new(self.color.r, self.color.g, self.color.b, math.floor(self.color.a - 230 * i))
+        )
+    end
 end
 
 function Player:get_pos(): Vector2

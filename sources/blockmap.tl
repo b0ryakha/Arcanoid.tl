@@ -104,27 +104,12 @@ function BlockMap:spawn()
 
     -- TODO: rework to using art
     if not next(self.data) then
-        local block_pad = 30
-        local window_pad = 25
-        local size = Vector2:new(50, 50)
-
-        for i = 1, 17 do
-            local pos = Vector2:new(size.x * (i - 1) + block_pad * i + window_pad, block_pad + window_pad)
-            local color = Color:new(100, 255, 100)
-            local hp = 2
-
-            if i > 4 and i < 14 then
-                hp = 3
-                color.r, color.g, color.b = 250, 240, 120
-            end
-
-            table.insert(self.data, Block:new(pos, color, size, hp))
-        end
-
-        for i = 2, 16 do
-            local pos = Vector2:new(size.x * (i - 1) + block_pad * i + window_pad, block_pad * 2 + size.y + window_pad)
-            table.insert(self.data, Block:new(pos, Color:new(100, 100, 255), size, 1))
-        end
+        self:spawnByArt(Vector2:new(50, 50), {
+            "       &&       ",
+            "  $    ##    $  ",
+            "       &&       ",
+            " @@@        @@@ ",
+        })
     end
 
     self:removeCollisions()
