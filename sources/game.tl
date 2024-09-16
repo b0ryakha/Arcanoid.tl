@@ -118,7 +118,7 @@ function Game:update(dt: number)
         if self.is_lose then
             self:init()
         elseif not self.is_start then
-            self.balls:first():start(Vector2:new(0, -1))
+            self.balls:first():start(Vector2:new(cmath.rand_double(-0.1, 0.1), -1))
             self.musics["track"]:play()
             self.is_start = true
         end
