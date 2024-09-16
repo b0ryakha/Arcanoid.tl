@@ -2,13 +2,13 @@ global type Particle = record
     pos: Vector2
     vel: Vector2
     size: Vector2
+    anim_ticks: number
 end
 
 global type Particles = record
     color: Color
     c_pos: Vector2
     data: { Particle }
-    live_ticks: number
 end
 
 function Particles:new(c_pos: Vector2, color: Color): Particles
@@ -17,7 +17,6 @@ function Particles:new(c_pos: Vector2, color: Color): Particles
     self.color = color:copy()
     self.c_pos = c_pos:copy()
     self.data = {}
-    self.live_ticks = 1.6
 
     for _ = 1, cmath.rand_int(5, 10) do
         local size <const> = cmath.rand_int(10, 15)
@@ -29,8 +28,9 @@ function Particles:new(c_pos: Vector2, color: Color): Particles
 
         table.insert(self.data, {
             pos = pos,
+            vel = vel,
             size = Vector2:new(size, size),
-            vel = vel
+            anim_ticks = cmath.rand_double(1, 2)
         })
     end
 
@@ -40,9 +40,8 @@ end
 function Particles:update(dt: number)
     for _, particle in ipairs(self.data) do
         particle.pos = particle.pos + (particle.vel * dt * 10)
+        particle.anim_ticks = particle.anim_ticks - dt
     end
-
-    self.live_ticks = self.live_ticks - dt
 end
 
 function Particles:draw()
@@ -52,7 +51,15 @@ function Particles:draw()
             math.floor(particle.pos.y),
             math.floor(particle.size.x),
             math.floor(particle.size.y),
-            self.color
+            Color:new(self.color.r, self.color.g, self.color.b, math.floor(self.color.a * particle.anim_ticks))
         )
     end
+end
+
+function Particles:isFade(): boolean
+    for _, particle in ipairs(self.data) do
+        if particle.anim_ticks > 0 then return false end
+    end
+
+    return true
 end

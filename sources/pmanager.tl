@@ -16,7 +16,7 @@ function PManager:update(dt: number)
     local i = 1
 
     while i <= #self.data do
-        if self.data[i].live_ticks <= 0 then
+        if self.data[i]:isFade() then
             table.remove(self.data, i)
         else
             self.data[i]:update(dt)
